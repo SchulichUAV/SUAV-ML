@@ -24,23 +24,20 @@ This repo contains the object detection and classification algorithms developed 
 ```bash
 # Clone the repository
 git clone https://github.com/SchulichUAV/2025ML.git
-# Navigate to the project directory
-cd 2025-ML
 # Install required dependencies
 pip install -r requirements.txt
 ```
 
 ## File Structure
 ```bash
-2025ML/
-│
 ├── README.md                  
 ├── requirements.txt           
 ├── Doc-Resources/             # Documentation resources
 ├── Data/                      # Stored datasets
 ├── Models/                    # Saved and trained models
 ├── Scripts/                   # All scripts
-|    └──Training               # Model training scripts
+     ├── Pipeline              # Files used to construct the pipeline
+|    └── Training               # Model training scripts
 └── Utils/                     # Utility functions
 ```
 
