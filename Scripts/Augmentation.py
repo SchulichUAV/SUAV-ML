@@ -41,6 +41,6 @@ def augment_images_in_folder(input_folder, output_folder):
             augmented_image.save(output_path)
 
 if __name__ == "__main__":
-    input_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/dataset'
-    output_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/augmented_dataset'
+    input_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/Data/Raw_Data'
+    output_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/Data/Augmented_Data'
     augment_images_in_folder(input_folder, output_folder)

@@ -34,9 +34,11 @@ pip install -r requirements.txt
 ├── requirements.txt           
 ├── Doc-Resources/             # Documentation resources
 ├── Data/                      # Stored datasets
+|    ├── Augmented_Data        # Images augmented through Augmentation.py
+|    └── Raw_Data              # Original dataset images
 ├── Models/                    # Saved and trained models
 ├── Scripts/                   # All scripts
-     ├── Pipeline              # Files used to construct the pipeline
+|     ├── Pipeline              # Files used to construct the pipeline
 |    └── Training               # Model training scripts
 └── Utils/                     # Utility functions
 ```
