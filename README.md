@@ -39,7 +39,6 @@ pip install -r requirements.txt
 |    └── Train_Data/           # Images used for training
 ├── Models/                    # Saved and trained models
 ├── Scripts/                   # All scripts
-|    ├── Pipeline/             # Files used to construct the pipeline
 |    └── Training/             # Model training scripts
 └── Utils/                     # Utility functions
 ```
