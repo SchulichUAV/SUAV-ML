@@ -1,5 +1,5 @@
 # Required dependencies
-tensorflow==2.9.1   # Latest tensorflow version supporting Apple Silicon (Apple users DO NOT change)
+tensorflow==2.9.1
 numpy==1.26.3
 pandas==2.2.1
 scikit-learn==1.3.1

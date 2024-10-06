@@ -1,12 +1,7 @@
 '''
 Script to augment test images.
 Is not included in the ML pipeline, but used for generation of diverse test data.
-
 This script should be ran prior to any training / test of the ML system to obtain all necessary data.
-Outputs:
-    - Augmented_Data: folder containing augmented images from the original dataset (Raw_Data)
-    - Test_Data: folder contaning images for testing. Contains a mix of original and augmented data
-    - Train_Data: folder contaning images for training. Contains a mix of original and augmented data
 '''
 import os
 import shutil
@@ -15,10 +10,10 @@ from PIL import Image
 import numpy as np
 from imgaug import augmenters as iaa
 
-def augment_image(image: Image.Image):
+def augment_image(image: Image.Image) -> Image.Image:
     '''
-    Augments a given image using a set of randomly applied augmentations such as 
-    flipping, rotating, brightness adjustment, scaling, noise, and more.
+    Augments image using a set of randomly applied augmentations such as 
+    flipping, rotating, brightness adjustment, scaling, noise, etc.
 
     Parameters:
     image (PIL.Image.Image): The input image to be augmented.
@@ -39,16 +34,14 @@ def augment_image(image: Image.Image):
         iaa.Sometimes(0.1, iaa.Grayscale(alpha=(0.0, 1.0))),  # grayscale 
         iaa.Sometimes(0.3, iaa.ElasticTransformation(alpha=50, sigma=5))  # elastic transformations
     ])
-
     image_np = np.array(image)
     augmented_image_np = augmenters(image=image_np)
     augmented_image = Image.fromarray(augmented_image_np)
     return augmented_image
 
-def split_and_augment(raw_folder: str, train_folder: str, test_folder: str, split_ratio=0.8):
+def split_and_augment(raw_folder: str, train_folder: str, test_folder: str, split_ratio=0.8) -> None:
     '''
-    Splits the raw images into training and testing sets. For each raw image, 
-    applies augmentation randomly and then splits the dataset into training and testing sets.
+    For each raw image, applies random augmentation and splits the dataset into training and testing sets.
 
     Parameters:
     raw_folder (str): Directory containing original images.
@@ -90,7 +83,6 @@ def split_and_augment(raw_folder: str, train_folder: str, test_folder: str, spli
         augmented_image = augment_image(image)
         augmented_image_path = os.path.join(test_folder, f"AUG-{os.path.basename(image_path)}")
         augmented_image.save(augmented_image_path)
-
 
 if __name__ == "__main__":
     raw_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/Data/Raw_Data'
