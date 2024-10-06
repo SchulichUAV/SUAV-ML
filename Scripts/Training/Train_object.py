@@ -1,4 +1,4 @@
-# Training script for Letter Classifier
+# Training script for object classifier
 
 
 

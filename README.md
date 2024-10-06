@@ -7,7 +7,7 @@ This repo contains the object detection and classification algorithms developed 
 
 - **Model Architecture**: utilizes three separate CNN models:
   - **Shape Classifier**: Determines the shape of the object within the proposed ROI.
-  - **Color Classifier**: Identifies the dominant color of the object within the proposed ROI. The model incorporates a tolerance mechanism to adapt to different illumination levels in different environments.
+  - **Color Classifier**: Identifies the dominant (shape colour) and second most dominant (letter colour) colour of the object within the proposed ROI. The model incorporates a tolerance mechanism to adapt to different illumination levels in different environments.
   - **Letter Classifier**: Recognizes alphanumeric characters contained within the detected object. Model is based on a CNN optimized for text recognition.
 
 <br>
@@ -34,12 +34,13 @@ pip install -r requirements.txt
 ├── requirements.txt           
 ├── Doc-Resources/             # Documentation resources
 ├── Data/                      # Stored datasets
-|    ├── Augmented_Data        # Images augmented through Augmentation.py
-|    └── Raw_Data              # Original dataset images
+|    ├── Raw_Data/             # Original dataset images
+|    ├── Test_Data/            # Images used for testing models 
+|    └── Train_Data/           # Images used for training
 ├── Models/                    # Saved and trained models
 ├── Scripts/                   # All scripts
-|     ├── Pipeline              # Files used to construct the pipeline
-|    └── Training               # Model training scripts
+|    ├── Pipeline/             # Files used to construct the pipeline
+|    └── Training/             # Model training scripts
 └── Utils/                     # Utility functions
 ```
 
