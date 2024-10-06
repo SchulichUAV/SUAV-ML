@@ -85,7 +85,8 @@ def split_and_augment(raw_folder: str, train_folder: str, test_folder: str, spli
         augmented_image.save(augmented_image_path)
 
 if __name__ == "__main__":
-    raw_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/Data/Raw_Data'
-    train_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/Data/Train_Data'
-    test_folder = '/Users/dominicgartner/Desktop/SUAV/2025ML/2025ML/Data/Test_Data'
+    base_dir = os.path.dirname(__file__)  # Get the current script's directory
+    raw_folder = os.path.join(base_dir, '../Data/Raw_Data')
+    train_folder = os.path.join(base_dir, '../Data/Train_Data')
+    test_folder = os.path.join(base_dir, '../Data/Test_Data')
     split_and_augment(raw_folder, train_folder, test_folder)
