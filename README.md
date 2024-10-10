@@ -5,14 +5,8 @@ This repo contains the object detection and classification algorithms developed 
 ## Specs
 - **Framework**: All models are written using **Tensorflow**.
 
-- **Model Architecture**: Utilizes separate CNN models:
-  - **Object Classifier**: Determines the object within the proposed ROI.
-  - **Color Classifier**: Identifies the dominant colour of the object within the proposed ROI. The model incorporates a tolerance mechanism to adapt to different illumination levels in different environments.
-
-<br>
-
-- **Object Detection Backbone**:
-  - **YOLOv8**: Real-time object detection. Achieves very high processing speed.
+- **Model Architecture**:
+  - **YOLOv8**: Real-time object detection. Achieves very high processing speed. Detects objects in images and draws bounding boxes around the ROI.
 
 ## WorkFlow
 
