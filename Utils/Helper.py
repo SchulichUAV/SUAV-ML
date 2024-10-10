@@ -4,21 +4,29 @@ to keep common functions organized and avoid code duplication.
 '''
 from PIL import Image
 
-# Full list of objects that are available for detection. Dataset labels
+# Full list of objects that are available for detection. Dataset labels.
+# 4 of these objects are randomly selected for detection in the competition.
 OBJECTS = [
-    'Trash Can',
-    'Tire',
-    'Bike',
-    'Basketball',
-    'Cone',
-    'Mannequin'
-]
-
-# Target objects we need to drop payload on.
-# We only update the JSON if detection is one of these objects.
-# NOTE: UPDATE prior to competition with up-to-date target objects
-TARGET_OBJECTS = [
-
+    'Mannequin',
+    'Car',
+    'Motorcycle',
+    'Airplane',
+    'Bus',
+    'Boat',
+    'Stop Sign',
+    'Bench',
+    'Snowboard',
+    'Umbrella',
+    'Sports Ball',
+    'Kite',
+    'Baseball Bat',
+    'Bed',
+    'Handbag',
+    'Microwave',
+    'Clock',
+    'Tennis Racket',
+    'Suitcase',
+    'Skis'
 ]
 
 # Universal Image sizes / specs for pre-processing
@@ -40,6 +48,7 @@ def process_image(image: Image.Image) -> Image.Image:
     '''
     pass
 
+# NOTE: For testing purposes, will be using the Flask server for this later once implemented with the new GCS.
 def update_position(old_lat: float, old_long: float, new_lat: float, new_long: float) -> tuple[float, float]:
     updated_lat = (old_lat + new_lat) / 2
     updated_long = (old_long + new_long) / 2
