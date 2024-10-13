@@ -1,8 +1,3 @@
-'''
-Script to augment test images.
-Is not included in the ML pipeline, but used for generation of diverse test data.
-This script should be ran prior to any training / test of the ML system to obtain all necessary data.
-'''
 import os
 import shutil
 import random
@@ -14,12 +9,6 @@ def augment_image(image: Image.Image) -> Image.Image:
     '''
     Augments image using a set of randomly applied augmentations such as 
     flipping, rotating, brightness adjustment, scaling, noise, etc.
-
-    Parameters:
-    image (PIL.Image.Image): The input image to be augmented.
-
-    Returns:
-    PIL.Image.Image: The augmented version of the input image.
     '''
     augmenters = iaa.Sequential([
         iaa.Sometimes(0.5, iaa.Fliplr(1.0)),  # horizontal flips 
@@ -39,50 +28,87 @@ def augment_image(image: Image.Image) -> Image.Image:
     augmented_image = Image.fromarray(augmented_image_np)
     return augmented_image
 
+def save_image_randomly(image: Image.Image, image_name: str, train_folder: str, test_folder: str, object_type: str) -> None:
+    '''
+    Saves an image either to the train or test folder randomly.
+    '''
+    if random.random() < 0.6:  # 60% chance to go to train
+        dest_folder = os.path.join(train_folder, object_type)
+    else: 
+        dest_folder = test_folder
+
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder) 
+        
+    dest_path = os.path.join(dest_folder, image_name)
+    
+    try:
+        image.save(dest_path)
+        return True
+    except Exception as e:
+        print(f"Error saving image {image_name}: {e}")
+        return False
+
 def split_and_augment(raw_folder: str, train_folder: str, test_folder: str, split_ratio=0.8) -> None:
     '''
-    For each raw image, applies random augmentation and splits the dataset into training and testing sets.
-
-    Parameters:
-    raw_folder (str): Directory containing original images.
-    train_folder (str): Directory where the training images will be saved.
-    test_folder (str): Directory where the testing images will be saved.
-    split_ratio (float): The proportion of images to use for training (default is 0.8).
-
-    Returns:
-    None
+    Applies random augmentation and splits the dataset into training and testing sets.
+    Ensures at least one image from each subfolder is in both train and test.
     '''
     if not os.path.exists(train_folder):
         os.makedirs(train_folder)
     if not os.path.exists(test_folder):
         os.makedirs(test_folder)
 
-    # Collect raw images
-    raw_images = [os.path.join(raw_folder, filename) for filename in os.listdir(raw_folder) if filename.endswith('.JPG')]
-    random.shuffle(raw_images)
-    split_index = int(len(raw_images) * split_ratio)
-    train_images = raw_images[:split_index]
-    test_images = raw_images[split_index:]
-    
-    # Process train images
-    for image_path in train_images:
-        image = Image.open(image_path)
-        # Copy original image to train
-        shutil.copy(image_path, train_folder)
-        # Save augmented version to train
-        augmented_image = augment_image(image)
-        augmented_image_path = os.path.join(train_folder, f"AUG-{os.path.basename(image_path)}")
-        augmented_image.save(augmented_image_path)
+    total_train_images = 0 
+    total_test_images = 0 
 
-    # Process test images
-    for image_path in test_images:
-        image = Image.open(image_path)
-        # Copy original image to test
-        shutil.copy(image_path, test_folder)
-        # Save augmented version to test
-        augmented_image = augment_image(image)
-        augmented_image_path = os.path.join(test_folder, f"AUG-{os.path.basename(image_path)}")
-        augmented_image.save(augmented_image_path)
+    # Traverse through each subfolder (object type) in the raw_folder
+    for object_type in os.listdir(raw_folder):
+        object_folder_path = os.path.join(raw_folder, object_type)
+        
+        if os.path.isdir(object_folder_path):
+            images = [os.path.join(object_folder_path, img) for img in os.listdir(object_folder_path) if img.endswith('.jpg')]
+            random.shuffle(images)
+
+            # Ensure at least one image goes to the test set and one to the train set
+            split_index = max(1, int(len(images) * split_ratio)) 
+
+            train_images = images[:split_index]
+            test_images = images[split_index:]
+
+            # Process train images
+            for image_path in train_images:
+                try:
+                    image = Image.open(image_path)
+                    object_train_folder = os.path.join(train_folder, object_type)
+                    if not os.path.exists(object_train_folder):
+                        os.makedirs(object_train_folder)
+
+                    shutil.copy(image_path, os.path.join(object_train_folder, os.path.basename(image_path)))
+                    total_train_images += 1
+                    
+                    augmented_image = augment_image(image)
+                    if save_image_randomly(augmented_image, f"AUG-{os.path.basename(image_path)}", train_folder, test_folder, object_type):
+                        total_train_images += 1
+                except Exception as e:
+                    print(f"Error processing image {image_path}: {e}")
+
+            # Process test images
+            for image_path in test_images:
+                try:
+                    image = Image.open(image_path)
+                    shutil.copy(image_path, test_folder)
+                    total_test_images += 1
+                    
+                    augmented_image = augment_image(image)
+                    if save_image_randomly(augmented_image, f"AUG-{os.path.basename(image_path)}", train_folder, test_folder, object_type):
+                        total_test_images += 1
+                except Exception as e:
+                    print(f"Error processing image {image_path}: {e}")
+
+    # Print total images saved
+    print(f"Total images saved in training set: {total_train_images}")
+    print(f"Total images saved in testing set: {total_test_images}")
 
 if __name__ == "__main__":
     base_dir = os.path.dirname(__file__)  # Get the current script's directory
