@@ -23,9 +23,15 @@ def augment_image(image: Image.Image) -> Image.Image:
         iaa.Sometimes(0.1, iaa.Grayscale(alpha=(0.0, 1.0))),  # grayscale 
         iaa.Sometimes(0.3, iaa.ElasticTransformation(alpha=50, sigma=5))  # elastic transformations
     ])
+
     image_np = np.array(image)
     augmented_image_np = augmenters(image=image_np)
     augmented_image = Image.fromarray(augmented_image_np)
+    
+    # Ensure the image is in RGB mode (JPEG doesn't support RGBA)
+    if augmented_image.mode != 'RGB':
+        augmented_image = augmented_image.convert('RGB')
+        
     return augmented_image
 
 def save_image_randomly(image: Image.Image, image_name: str, train_folder: str, test_folder: str, object_type: str) -> None:
@@ -38,11 +44,14 @@ def save_image_randomly(image: Image.Image, image_name: str, train_folder: str, 
         dest_folder = test_folder
 
     if not os.path.exists(dest_folder):
-        os.makedirs(dest_folder) 
+        os.makedirs(dest_folder)
         
     dest_path = os.path.join(dest_folder, image_name)
     
     try:
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+            
         image.save(dest_path)
         return True
     except Exception as e:
@@ -80,6 +89,9 @@ def split_and_augment(raw_folder: str, train_folder: str, test_folder: str, spli
             for image_path in train_images:
                 try:
                     image = Image.open(image_path)
+                    if image.mode != 'RGB':
+                        image = image.convert('RGB')
+                        
                     object_train_folder = os.path.join(train_folder, object_type)
                     if not os.path.exists(object_train_folder):
                         os.makedirs(object_train_folder)
@@ -97,6 +109,9 @@ def split_and_augment(raw_folder: str, train_folder: str, test_folder: str, spli
             for image_path in test_images:
                 try:
                     image = Image.open(image_path)
+                    if image.mode != 'RGB':
+                        image = image.convert('RGB')
+                    
                     shutil.copy(image_path, test_folder)
                     total_test_images += 1
                     
