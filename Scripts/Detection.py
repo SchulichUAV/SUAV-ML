@@ -3,10 +3,11 @@ Final combined detection file.
 '''
 import time
 import base64
-import cv2 
+import cv2
 import numpy as np
 from inference_sdk import InferenceHTTPClient
 from PIL import Image
+
 
 def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> None:
     """
@@ -20,7 +21,8 @@ def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> No
         for img in images:
             # Convert PIL Image to OpenCV format
             cv_image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-            resized_image = cv2.resize(cv_image, (640, 640), interpolation=cv2.INTER_AREA)
+            resized_image = cv2.resize(
+                cv_image, (640, 640), interpolation=cv2.INTER_AREA)
 
             # Convert the resized image to base64 format
             _, buffer = cv2.imencode('.png', resized_image)
@@ -32,15 +34,17 @@ def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> No
                 workspace_name="suavcoco",
                 workflow_id="combined-models",
                 images={
-                    "image": base64_image 
+                    "image": base64_image
                 }
             )
-            
+
             end_time = time.time()
-            print(f"Workflow execution time: {end_time - start_time:.2f} seconds")
+            print(
+                f"Workflow execution time: {end_time - start_time:.2f} seconds")
 
             if not result or "output" not in result[0]:
-                raise ValueError("Invalid workflow result. Missing 'output' key.")
+                raise ValueError(
+                    "Invalid workflow result. Missing 'output' key.")
 
             # Decode the result image
             image_string = result[0]["output"]
@@ -60,6 +64,7 @@ def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> No
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
 if __name__ == "__main__":
     # ---- Add Images Here ----
     image_paths = ["", ""]
@@ -67,7 +72,7 @@ if __name__ == "__main__":
 
     client = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
-        api_key=""  # ---- Add your API key here ----
+        api_key="7dEiP3o3XQGNET8f4jlC"  # ---- Add your API key here ----
     )
 
     detect_objects(images, client)

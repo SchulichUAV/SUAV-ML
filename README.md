@@ -3,7 +3,7 @@
 This repo contains the object detection and classification algorithms developed to identify, classify, and determine the spatial coordinates of target objects.
 
 ## Specs
-- **Framework**: All models are written using **Tensorflow**.
+- **Framework**: All models are written using **Tensorflow**. (u sure?)
 
 - **Model Architecture**:
   - **YOLOv8**: Real-time object detection. Achieves very high processing speed. Detects objects in images and draws bounding boxes around the ROI.
