@@ -1,12 +1,17 @@
 '''
 Final combined detection file.
 '''
+import os
 import time
-import base64
 import cv2
+import base64
 import numpy as np
-from inference_sdk import InferenceHTTPClient
 from PIL import Image
+from dotenv import load_dotenv
+from inference_sdk import InferenceHTTPClient
+from JSONProcessor import json_processor
+
+load_dotenv()
 
 
 def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> None:
@@ -19,6 +24,8 @@ def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> No
     """
     try:
         for img in images:
+
+            print(f"Starting image iteration {images.index(img)+1}")
             # Convert PIL Image to OpenCV format
             cv_image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
             resized_image = cv2.resize(
@@ -38,6 +45,10 @@ def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> No
                 }
             )
 
+            # here is file obj update in given path
+            json_processor(result[0]['Consensus-Predictions']
+                           ['predictions'][0], 'output.json')
+
             end_time = time.time()
             print(
                 f"Workflow execution time: {end_time - start_time:.2f} seconds")
@@ -52,12 +63,9 @@ def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> No
             nparr = np.frombuffer(image_data, np.uint8)
             output_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-            cv2.imshow("Object Detection", output_image)
+            # cv2.imshow("Object Detection", output_image)
 
-            key = cv2.waitKey(0)
-            if key == ord('q'):
-                print("Quitting...")
-                break
+            print(f"Completed image iteration {images.index(img)+1}")
 
         cv2.destroyAllWindows()
 
@@ -67,12 +75,22 @@ def detect_objects(images: list[Image.Image], client: InferenceHTTPClient) -> No
 
 if __name__ == "__main__":
     # ---- Add Images Here ----
-    image_paths = ["", ""]
+    image_paths = []
+
+    '''
+        IMPORTANT REQUEST,
+        HERE THE LAT AND LON SHOULD BE STORED AS A TUPLE,
+        INSIDE A TUPLE WITH THE IMAGE URL
+        SOMETHING LIKE AN ARRAY OF:
+            [('IMAGE_URL', (LAT, LON))]
+        SO I CAN NOW APPEND THE LAT AND LON TO THE JSON
+
+    '''
     images = [Image.open(path) for path in image_paths]
 
     client = InferenceHTTPClient(
-        api_url="https://detect.roboflow.com",
-        api_key=""  # ---- Add your API key here ----
+        api_url=f"{os.getenv('ML_URI')}",
+        api_key=f"{os.getenv('API_KEY')}"  # ---- Add your API key here ----
     )
 
     detect_objects(images, client)

@@ -1,0 +1,61 @@
+[
+  {
+    "width": 126.0,
+    "height": 640.0,
+    "x": 387.0,
+    "y": 320.0,
+    "confidence": 0.7943441271781921,
+    "class_id": 12,
+    "class": "snowboard",
+    "detection_id": "cbbeadbd-0b57-44c3-b713-600a8c14ed12",
+    "parent_id": "image"
+  },
+  {
+    "width": 126.0,
+    "height": 640.0,
+    "x": 387.0,
+    "y": 320.0,
+    "confidence": 0.7943441271781921,
+    "class_id": 12,
+    "class": "snowboard",
+    "detection_id": "74faf20f-f722-43d7-bf6a-94877615fc53",
+    "parent_id": "image"
+  },
+  {
+    "width": 126.0,
+    "height": 640.0,
+    "x": 387.0,
+    "y": 320.0,
+    "confidence": 0.7943441271781921,
+    "class_id": 12,
+    "class": "snowboard",
+    "detection_id": "e77c33de-5a1e-4f95-a5de-0d4dc886a77c",
+    "parent_id": "image"
+  },
+  {
+    "width": 126.0,
+    "height": 640.0,
+    "x": 387.0,
+    "y": 320.0,
+    "confidence": 0.7943441271781921,
+    "class_id": 12,
+    "class": "snowboard",
+    "detection_id": "dd9e1a60-2a12-47e1-a636-0b4912f39ce0",
+    "parent_id": "image",
+    "latitude": "UNAVAILABLE ATM",
+    "longitude": "UNAVAILABLE ATM"
+  },
+  {
+    "width": 126.0,
+    "height": 640.0,
+    "x": 387.0,
+    "y": 320.0,
+    "confidence": 0.7943441271781921,
+    "class_id": 12,
+    "class": "snowboard",
+    "detection_id": "2458b741-823d-4feb-9dab-e17a7cda82dd",
+    "parent_id": "image",
+    "latitude": "UNAVAILABLE ATM",
+    "longitude": "UNAVAILABLE ATM"
+  }
+]
