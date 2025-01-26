@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     client = InferenceHTTPClient(
         api_url="http://localhost:9001",
-        api_key="7dEiP3o3XQGNET8f4jlC" # Add your API key here
+        api_key="" # Add your API key here
     )
 
     # Queues for images and detections
