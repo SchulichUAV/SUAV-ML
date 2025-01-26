@@ -7,6 +7,7 @@ from inference_sdk import InferenceHTTPClient
 from threading import Thread
 from queue import Queue
 
+global_counter = 0
 
 def run_inference_batch(base64_images: list, client: InferenceHTTPClient):
     """
@@ -17,16 +18,20 @@ def run_inference_batch(base64_images: list, client: InferenceHTTPClient):
 
         start_time = time.time()
         # Run the inference workflow for the batch
-        results = client.run_workflow(
-            workspace_name="suavcoco",
-            workflow_id="combined-models",
-            images={"image": base64_images}
-        )
+
+        results_total = [] 
+        for img in base64_images:
+            results = client.run_workflow(
+                workspace_name="suavcoco",
+                workflow_id="combined-models",
+                images={"image": img}
+            )
+            results_total.append(results)
 
         end_time = time.time()
         print(f"Workflow finished. Execution time: {end_time - start_time:.2f} seconds")
 
-        return results
+        return results_total
 
     except Exception as e:
         print(f"Inference error: {e}")
@@ -37,16 +42,18 @@ def geomatics_calculation(detections) -> None:
     """
     Placeholder for geomatics calculations using the output image.
     """
+    global global_counter
+    global_counter += 1
     try:
         print("Performing geomatics calculations...")
         # Simulate actual geomatics calculations
-        time.sleep(2)  # Simulating processing time
+        time.sleep(.4)  # Simulating processing time
         print(f"Geomatics calculations complete")
     except Exception as e:
         print(f"Geomatics calculation error: {e}")
 
 
-def inference_worker(image_queue: Queue, detection_queue: Queue, client: InferenceHTTPClient, batch_size=5):
+def inference_worker(image_queue: Queue, detection_queue: Queue, client: InferenceHTTPClient, batch_size=12):
     """
     Worker thread to process images in batches and run inference.
     """
@@ -59,10 +66,9 @@ def inference_worker(image_queue: Queue, detection_queue: Queue, client: Inferen
 
             # Convert PIL Image to OpenCV format
             cv_image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-            resized_image = cv2.resize(cv_image, (640, 640), interpolation=cv2.INTER_AREA)
-
+           
             # Convert the resized image to base64 format
-            _, buffer = cv2.imencode('.png', resized_image)
+            _, buffer = cv2.imencode('.png', cv_image)
             base64_image = base64.b64encode(buffer).decode('utf-8')
 
             batch.append(base64_image)
@@ -70,11 +76,14 @@ def inference_worker(image_queue: Queue, detection_queue: Queue, client: Inferen
 
         if not batch:
             break
+        
+        results = run_inference_batch(batch, client)
 
-        detections = run_inference_batch(batch, client)
-        if detections:
-            for detection in detections:
-                detection_queue.put(detection)
+        if results is not None:
+            for result in results:
+                print(result)
+                for detection in result[0]['consensus_predictions']['predictions']:
+                    detection_queue.put(detection)
 
 
 def geomatics_worker(detection_queue: Queue):
@@ -95,25 +104,35 @@ def geomatics_worker(detection_queue: Queue):
 if __name__ == "__main__":
     # ---- Add Images Here ---- (Random images for testing threads)
     image_paths = [
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/Model_Architecture.png",
-        "../Doc-Resources/WorkFlow.png",
-        "../Doc-Resources/WorkFlow.png",
-        "../Doc-Resources/WorkFlow.png",
-        "../Doc-Resources/WorkFlow.png",
-        "../Doc-Resources/WorkFlow.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/testimg.png",
+        "../Doc-Resources/stopersimg.webp",
+        "../Doc-Resources/stopersimg.webp",
     ]
     images = [Image.open(path) for path in image_paths]
 
     client = InferenceHTTPClient(
         api_url="http://localhost:9001",
-        api_key="" # Add your API key here
+        api_key="7dEiP3o3XQGNET8f4jlC" # Add your API key here
     )
 
     # Queues for images and detections
@@ -129,7 +148,7 @@ if __name__ == "__main__":
         Thread(target=inference_worker, args=(image_queue, detection_queue, client), daemon=True),
         Thread(target=geomatics_worker, args=(detection_queue,), daemon=True)
     ]
-    
+
     start = time.time()
     for thread in threads:
         thread.start()
@@ -147,4 +166,5 @@ if __name__ == "__main__":
         thread.join()
 
     end = time.time()
+    print(f"Total geomatics calculations performed: {global_counter}")
     print("Processing complete. Took {:.2f} seconds to complete".format(end - start))
