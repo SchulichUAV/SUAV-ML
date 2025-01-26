@@ -95,25 +95,25 @@ def geomatics_worker(detection_queue: Queue):
 if __name__ == "__main__":
     # ---- Add Images Here ---- (Random images for testing threads)
     image_paths = [
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/Model_Architecture.png",
-        "Doc-Resources/WorkFlow.png",
-        "Doc-Resources/WorkFlow.png",
-        "Doc-Resources/WorkFlow.png",
-        "Doc-Resources/WorkFlow.png",
-        "Doc-Resources/WorkFlow.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/Model_Architecture.png",
+        "../Doc-Resources/WorkFlow.png",
+        "../Doc-Resources/WorkFlow.png",
+        "../Doc-Resources/WorkFlow.png",
+        "../Doc-Resources/WorkFlow.png",
+        "../Doc-Resources/WorkFlow.png",
     ]
     images = [Image.open(path) for path in image_paths]
 
     client = InferenceHTTPClient(
-        api_url="https://detect.roboflow.com",
-        api_key="7dEiP3o3XQGNET8f4jlC" # Add your API key here
+        api_url="http://localhost:9001",
+        api_key="" # Add your API key here
     )
 
     # Queues for images and detections
@@ -129,7 +129,8 @@ if __name__ == "__main__":
         Thread(target=inference_worker, args=(image_queue, detection_queue, client), daemon=True),
         Thread(target=geomatics_worker, args=(detection_queue,), daemon=True)
     ]
-
+    
+    start = time.time()
     for thread in threads:
         thread.start()
 
@@ -145,4 +146,5 @@ if __name__ == "__main__":
     for thread in threads:
         thread.join()
 
-    print("Processing complete.")
+    end = time.time()
+    print("Processing complete. Took {:.2f} seconds to complete".format(end - start))
