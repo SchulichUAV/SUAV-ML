@@ -1,3 +1,5 @@
+import os
+import shutil
 import time
 import base64
 import cv2
@@ -53,18 +55,41 @@ def geomatics_calculation(detections) -> None:
         print(f"Geomatics calculation error: {e}")
 
 
+def scan_directory_for_images(image_queue:Queue,image_folder="./images", tracked_folder="./tracked_folder"):
+    """
+    Scans the given directory for new images, adds them to the queue,
+    and moves them to the 'tracked' folder.
+    """
+    # Ensure the tracked folder exists
+    os.makedirs(tracked_folder, exist_ok=True)
+
+    for file in os.listdir(image_folder):
+        if file.endswith(('.png', '.jpg', '.jpeg', '.webp')):
+            file_path = os.path.join(image_folder, file)
+            new_path = os.path.join(tracked_folder, file)
+            
+            # Move image to 'tracked' folder first
+            shutil.move(file_path, new_path)
+
+            # Add moved image path to the queue
+            image_queue.put(new_path)
+
+
 def inference_worker(image_queue: Queue, detection_queue: Queue, client: InferenceHTTPClient, batch_size=12):
     """
     Worker thread to process images in batches and run inference.
     """
+
+    
     while True:
+        scan_directory_for_images(image_queue)
         batch = []
 
         # Get the current queue size (how many images are available)
         available_images = image_queue.qsize()
         
         # Determine batch size dynamically
-        batch_size = min(available_images, max_batch_size) if available_images > 0 else 0
+        batch_size = min(available_images, batch_size) if available_images > 0 else 0
 
         while len(batch) < batch_size and not image_queue.empty():
             img = image_queue.get()
@@ -111,29 +136,9 @@ def geomatics_worker(detection_queue: Queue):
 if __name__ == "__main__":
     # ---- Add Images Here ---- (Random images for testing threads)
     image_paths = [
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/testimg.png",
-        "../Doc-Resources/stopersimg.webp",
-        "../Doc-Resources/stopersimg.webp",
+        "Data\Test_Data_Objects\car\car-removebg-preview.png"
+        ,"Data\Test_Data_Objects\car\car3-removebg-preview.png",
+        "Data\Test_Data_Objects\mattress\mattress2.png"
     ]
     images = [Image.open(path) for path in image_paths]
 
