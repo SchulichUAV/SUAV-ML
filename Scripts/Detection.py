@@ -191,7 +191,7 @@
 
 
 import os
-import shutil
+import itertools
 import time
 import base64
 import cv2
@@ -245,14 +245,14 @@ def scan_directory_for_images(image_queue, image_folder="../images", batch_size=
     and keeps track of processed files.
     """
     global scanned_images
+    number_of_images = len(scanned_images)
     new_images = []
-
     # Get all image files
-    for file in sorted(os.listdir(image_folder)):  # Sort to process in order
+    for file in itertools.islice(sorted(os.listdir(image_folder)), number_of_images, None):  # Sort to process in order
         if file.endswith(('.png', '.jpg', '.jpeg', '.webp')) and file not in scanned_images:
             file_path = os.path.join(image_folder, file)
             new_images.append(file_path)
-
+           
             # Track scanned images
             scanned_images.add(file)
 
@@ -317,7 +317,7 @@ def geomatics_worker(detection_queue):
 if __name__ == "__main__":
     client = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
-        api_key=""  # Add your API key
+        api_key="7dEiP3o3XQGNET8f4jlC"  # Add your API key
     )
 
     image_queue = Queue()
