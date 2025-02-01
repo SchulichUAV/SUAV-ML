@@ -59,6 +59,13 @@ def inference_worker(image_queue: Queue, detection_queue: Queue, client: Inferen
     """
     while True:
         batch = []
+
+        # Get the current queue size (how many images are available)
+        available_images = image_queue.qsize()
+        
+        # Determine batch size dynamically
+        batch_size = min(available_images, max_batch_size) if available_images > 0 else 0
+
         while len(batch) < batch_size and not image_queue.empty():
             img = image_queue.get()
             if img is None:
