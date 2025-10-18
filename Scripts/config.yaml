@@ -1,0 +1,17 @@
+path: datasets/testDataset
+
+train: images/train
+val: images/val
+
+names:
+  0: square0
+  1: square1
+  2: square2
+  3: square3
+  4: square4
+  5: square5
+  6: square6
+  7: square7
+  8: square8
+  9: square9
+  10: target
