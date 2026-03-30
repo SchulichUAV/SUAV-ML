@@ -1,0 +1,28 @@
+[
+  {
+    "width": 126.0,
+    "height": 640.0,
+    "x": 387.0,
+    "y": 320.0,
+    "confidence": 0.7943441271781921,
+    "class_id": 12,
+    "class": "snowboard",
+    "detection_id": "dd9e1a60-2a12-47e1-a636-0b4912f39ce0",
+    "parent_id": "image",
+    "latitude": "UNAVAILABLE ATM",
+    "longitude": "UNAVAILABLE ATM"
+  },
+  {
+    "width": 126.0,
+    "height": 640.0,
+    "x": 387.0,
+    "y": 320.0,
+    "confidence": 0.7943441271781921,
+    "class_id": 12,
+    "class": "snowboard",
+    "detection_id": "2458b741-823d-4feb-9dab-e17a7cda82dd",
+    "parent_id": "image",
+    "latitude": "UNAVAILABLE ATM",
+    "longitude": "UNAVAILABLE ATM"
+  }
+]
